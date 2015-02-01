@@ -1,0 +1,61 @@
+###############################
+# Exploring CTA Ridership Data
+# Last Updated 1/13/15
+# By Charlie Ruberg
+###############################
+
+
+install.packages("ggplot2", dependencies = T) 
+library('ggplot2')
+install.packages("dplyr", dependencies = T)
+library('dplyr')
+install.packages("sqldf", dependencies = T)
+library('sqldf')
+
+getwd()
+setwd('C:/Users/charlier/Documents/Enrichment/Data')
+
+cta <- read.csv('cta_rides.csv') 
+cta$time <- as.Date(cta$date, "%m/%d/%Y")
+names(cta)
+head(cta)
+str(cta)
+
+
+fullerton <- cta[cta$stationname == 'Fullerton',]
+fullerton$time <- as.Date(fullerton$date, "%m/%d/%Y")
+str(fullerton)
+
+summary(fullerton$rides)
+
+# Look at fullerton weekday ridership over time
+ggplot(aes(x = time, y = rides, color  = daytype), data = fullerton) +
+  scale_x_date() +
+  geom_jitter() +
+  geom_smooth(method = 'lm')
+  ggtitle('Fullerton Ridership over Time by Daytype')
+
+
+# which station has the most riders?
+
+# NEED TO HAVE OVER TIME COMPONENT!
+station_means <- sqldf('select stationname, avg("rides") as avg_ride from cta group by stationname')
+
+head(station_means)
+
+popular <- station_means[station_means$avg_ride >= 10000,]
+
+ggplot(aes(x=stationname, y = avg_ride), data = popular) +
+  geom_point()
+
+
+
+
+
+
+
+
+
+
+
+
