@@ -1,0 +1,32 @@
+library('tm')
+library('slam')
+# install.packages('NLP')
+library('NLP')
+# install.packages('openNLP')
+library('openNLP')
+# install.packages('xlsx')
+library(xlsx)
+
+setwd('C:/Users/charlier/Documents/External/JLL/texts')
+getwd()
+ls()
+
+data <- read.csv("~/External/JLL/texts/sentences.csv")
+names(data)
+
+acq_results <- grep("acq", data$content)
+acq_results
+acq_mentions <- data[results,]
+
+
+
+write.xlsx(acq_mentions, "C:/Users/charlier/Documents/External/JLL/texts/aqcuisition_mentions.xlsx")
+
+
+new_results <- grep("new", data$sentence)
+new_results
+new_mentions <- data[new_results,]
+
+
+
+write.xlsx(new_mentions, "C:/Users/charlier/Documents/External/JLL/texts/new_mentions.xlsx")
