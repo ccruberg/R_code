@@ -1,0 +1,74 @@
+# Define web page
+kroger.page <- readLines("http://seekingalpha.com/article/2732105-the-krogers-kr-ceo-rodney-mcmullen-on-q3-2014-results-earnings-call-transcript?part=single")
+length(kroger.page)
+
+# Identify the text that will be analyzed
+kroger.page[56:647]
+
+test <- grep("new", kroger.page)
+test
+
+# Define start line and end line
+id.1 <- 56
+id.2 <- 647
+
+# Create text data of the isolated text
+text.data <- kroger.page[id.1:id.2]
+rm(kroger.page, id.1, id.2)
+text.data
+
+# remove HTML tag "</p>"
+td.1 <- gsub(pattern = "<p>", replacement = "", x = text.data, 
+             ignore.case=TRUE, perl = FALSE, fixed = FALSE, useBytes=FALSE)
+
+td.2 <- gsub(pattern = "</p>", replacement = "", x = td.1, 
+             ignore.case=TRUE, perl = FALSE, fixed = FALSE, useBytes=FALSE)
+
+text.d <- td.2; rm(text.data, td.1, td.2)
+text.d
+
+# bring in text mining library and define corpus
+library(tm)
+txt <- VectorSource(text.d); rm(text.d)
+txt.corpus <- Corpus(txt); rm(txt)
+inspect(txt.corpus)
+
+# clean corpus (lowercase, remove punctuation, numbers, and stopwords)
+txt.corpus <- tm_map(txt.corpus, tolower)
+txt.corpus <- tm_map(txt.corpus, removePunctuation)
+txt.corpus <- tm_map(txt.corpus, removeNumbers)
+txt.corpus <- tm_map(txt.corpus, removeWords, stopwords("english"))
+txt.corpus
+inspect(txt.corpus)
+
+# bring in snowballc library
+library(SnowballC)
+txt.corpus <- tm_map(txt.corpus, stemDocument)
+detach("package:SnowballC")
+inspect(txt.corpus)
+
+# remove empty spaces and define as text document
+txt.corpus <- tm_map(txt.corpus, stripWhitespace)
+txt.corpus <- tm_map(txt.corpus, PlainTextDocument)
+inspect(txt.corpus)
+
+# Now create Term Document Matrix
+tdm <- TermDocumentMatrix(txt.corpus)
+inspect(tdm[1:20,])
+
+# Find the words used most frequently (in this case more tahn 8 times)
+findFreqTerms(x = tdm, lowfreq = 20, highfreq = Inf)
+
+# Find words associated with "customer"
+findAssocs(x= tdm, term="customer", corlimit = 0.6)
+
+# Adjust Sparse Words
+tdm.common.60 <- removeSparseTerms(x=tdm, sparse = 0.60)
+tdm.common.20 <- removeSparseTerms(x=tdm, sparse = 0.20)
+
+tdm
+tdm.common.60
+tdm.common.20
+
+inspect(tdm.common.60)
+inspect(tdm.common.20)
