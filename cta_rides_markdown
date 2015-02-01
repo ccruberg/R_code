@@ -1,0 +1,47 @@
+---
+title: "CTA Ridership Data Exploration"
+author: "Charlie Ruberg charles.ruberg@gmail.com"
+date: "Tuesday, January 13, 2015"
+output: html_document
+---
+
+Exploring the CTA Ridership data: data is from the City of Chicago Data Portal and can be found at <https://data.cityofchicago.org/Transportation/CTA-Ridership-L-Station-Entries-Daily-Totals/5neh-572f?>.
+
+The purpose of this analysis is to understand which "L" stops are the busiest and understand what makes a train stop busy. It wil focus mostly on the Red Line route and specifically on the Fullerton station. Eventually I would like to understand the morning commute and be able to determine what time should I leave for work in the morning?
+
+```{r include=FALSE, echo=FALSE}
+install.packages('ggplot2', dependencies = T, repos="http://cran.rstudio.com/") 
+library('ggplot2')
+
+install.packages('ggplot2', dependencies = T, repos="http://cran.rstudio.com/") 
+library('ggplot2')
+
+
+getwd()
+setwd('C:/Users/charlier/Documents/Enrichment/Data')
+
+cta <- read.csv('cta_rides.csv') 
+fullerton <- cta[cta$stationname == 'Fullerton',]
+fullerton$time <- as.Date(fullerton$date, "%m/%d/%Y")
+
+```
+
+Which stop is the busiest?
+
+```{r}
+
+```
+
+
+Has Fullerton ridership increased over time? Is there a pre-existing trend in ridership? Here is a scatter plot looking only at the Fullerton stop over the entire time period found in the data. 
+
+**Fullerton Ridership over Time (A = Saturday, U = Sunday/Holiday, W = Weekday)**
+
+```{r, echo=FALSE}
+ggplot(aes(x = time, y = rides, color  = daytype), data = fullerton) +
+  scale_x_date() +
+  geom_jitter() +
+  geom_smooth(method = 'lm')
+  ggtitle('Fullerton Ridership over Time by Daytype')
+```
+
